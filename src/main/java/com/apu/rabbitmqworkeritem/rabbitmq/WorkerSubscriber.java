@@ -30,6 +30,10 @@ public class WorkerSubscriber {
     private final String routingKey;
     private final String queueName;
     private WorkerPublisher publisher;
+    
+    private ConnectionFactory factory;
+    private Connection conn;
+    private Channel channel;
 
     public WorkerSubscriber(String exchangeName, String routingKey, String queueName) {
         this.exchangeName = exchangeName;
@@ -42,14 +46,14 @@ public class WorkerSubscriber {
     }
     
     public void run() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
+        factory = new ConnectionFactory();
         factory.setUsername(RabbitMqSettings.USERNAME);
         factory.setPassword(RabbitMqSettings.PASSWORD);
         factory.setVirtualHost(RabbitMqSettings.VIRTUAL_HOST);
         factory.setHost(RabbitMqSettings.HOST);
         factory.setPort(RabbitMqSettings.PORT);
-        Connection conn = factory.newConnection();
-        Channel channel = conn.createChannel();
+        conn = factory.newConnection();
+        channel = conn.createChannel();
         boolean durable = true;
         channel.exchangeDeclare(exchangeName, "direct", durable);
         channel.queueDeclare(queueName, durable, false, false, null);
@@ -77,6 +81,25 @@ public class WorkerSubscriber {
              }
         };
         channel.basicConsume(queueName, true, consumer);
+    }
+    
+    public void close() {
+        if(channel != null) { 
+            try {
+                channel.close();
+            } catch (IOException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            } catch (TimeoutException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if(conn != null) {
+            try {
+                conn.close();
+            } catch (IOException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }        
     }
     
 }

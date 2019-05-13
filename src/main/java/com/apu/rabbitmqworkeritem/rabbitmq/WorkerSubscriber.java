@@ -5,7 +5,7 @@
  */
 package com.apu.rabbitmqworkeritem.rabbitmq;
 
-import com.apu.rabbitmqworkeritem.SymbolCounter;
+import com.apu.rabbitmqworkeritem.WorkerSymbolCounter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -66,7 +66,7 @@ public class WorkerSubscriber {
                                         byte[] body) throws IOException {
 
                     String message = new String(body, "UTF-8");
-                    SymbolCounter sc = new SymbolCounter();
+                    WorkerSymbolCounter sc = new WorkerSymbolCounter();
                     Map<Character,Integer> resultMap = sc.countSymbols(message);
                     ObjectMapper mapper = new ObjectMapper();
                     String jsonResult = mapper.writerWithDefaultPrettyPrinter()

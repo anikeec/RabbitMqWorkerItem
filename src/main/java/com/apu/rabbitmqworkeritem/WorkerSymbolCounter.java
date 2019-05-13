@@ -13,20 +13,27 @@ import java.util.Set;
 /**
  *
  * @author apu
+ * this is worker function with delay for imitation difficult process
  */
-public class SymbolCounter {
+public class WorkerSymbolCounter {
     
-    public Map<Character,Integer> symbolMap = new HashMap<>();
+    private Map<Character,Integer> symbolMap = new HashMap<>();
+    
+    private final int AMOUNT_OF_SYMBOLS_BETWEEN_DELAYS = 1000;
+    private final int THREAD_DELAY_MS = 50;
     
     public Map<Character,Integer> countSymbols(String text) {
         
         symbolMap.clear();
-        
-        int fullLength = text.length();
        
         Character symbol;
         int amount = 0;
         for(int i=0; i<text.length(); i++) {
+            if(i%AMOUNT_OF_SYMBOLS_BETWEEN_DELAYS == 0) {
+                try {
+                    Thread.sleep(THREAD_DELAY_MS);
+                } catch (InterruptedException ex) {}
+            }
             symbol = text.charAt(i);            
             if(symbolMap.containsKey(symbol)) {
                 amount = symbolMap.get(symbol);                              

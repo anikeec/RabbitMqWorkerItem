@@ -44,7 +44,7 @@ public class WorkerPublisher {
                                 routingKey, 
                                 MessageProperties.PERSISTENT_TEXT_PLAIN, 
                                 message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + message.length() + "'");
+            System.out.println("Sent " + message.length() + " symbols.");
             
         }
     }
